@@ -10,8 +10,8 @@ export default function Adicionar({ route, navigation }) {
 
   async function editarProduto() {
     try {
-      const response = await fetch('http://127.0.0.1:5000/produto', {
-        method: 'POST',
+      const response = await fetch('http://127.0.0.1:5000/produto/' + PID, {
+        method: 'PUT',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json'
@@ -25,6 +25,7 @@ export default function Adicionar({ route, navigation }) {
 
       if (response.status == 201) {
         alert("Produto editado")
+        navigation.navigate('Principal')
       } else {
         throw "Valores inválidos"
       }
@@ -35,7 +36,21 @@ export default function Adicionar({ route, navigation }) {
   }
 
   async function removerProduto() {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/produto/' + PID, {
+        method: 'DELETE'
+      })
 
+      if (response.status == 204) {
+        alert("Produto removido")
+        navigation.navigate('Principal')
+      } else {
+        throw "Valores inválidos"
+      }
+    } catch (error) {
+      console.log(error)
+      alert(error)
+    }
   }
 
   // configura os valores a partir dos que foram passados
