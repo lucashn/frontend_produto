@@ -6,6 +6,10 @@ import { useState, useEffect } from 'react'
 export default function Principal({ navigation }) {
   const [produtos, setProdutos] = useState([])
 
+  function verDetalhes(produto) {
+    navigation.navigate('Detalhes', produto)
+  }
+
   async function lerProdutos() {
     try {
       const response = await fetch('http://127.0.0.1:5000/produto')
@@ -17,8 +21,12 @@ export default function Principal({ navigation }) {
   }
 
   useEffect(() => {
-    lerProdutos().then((resp) => setProdutos(resp))
-  }, [])
+    const unsubscribe = navigation.addListener('focus', () => {
+      lerProdutos().then((resp) => setProdutos(resp))
+    });
+
+    return unsubscribe;
+  }, [navigation])
 
   return (
     <>
@@ -36,7 +44,10 @@ export default function Principal({ navigation }) {
         </DataTable>
 
         {produtos.map((produto) => (
-          <DataTable.Row key={produto.p_id}>
+          <DataTable.Row
+            key={produto.p_id}
+            onPress={() => verDetalhes(produto)}  
+          >
             <DataTable.Cell>{produto.nome}</DataTable.Cell>
             <DataTable.Cell numeric>{produto.quantidade}</DataTable.Cell>
             <DataTable.Cell numeric>{produto.preco}</DataTable.Cell>

@@ -4,6 +4,7 @@ import { Provider, DefaultTheme } from 'react-native-paper'
 
 import Principal from './telas/Principal'
 import Adicionar from './telas/Adicionar'
+import Detalhes from './telas/Detalhes'
 
 const Stack = createStackNavigator()
 
@@ -21,6 +22,7 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Principal" component={Principal} />
           <Stack.Screen name="Adicionar" component={Adicionar} />
+          <Stack.Screen name="Detalhes" component={Detalhes} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

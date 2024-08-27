@@ -1,13 +1,14 @@
-import { useState } from 'react'
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react'
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { Button, TextInput, Appbar } from 'react-native-paper';
 
-export default function Adicionar({ navigation }) {
+export default function Adicionar({ route, navigation }) {
+  const [PID, setPID] = useState('')
   const [nome, setNome] = useState('')
   const [quantidade, setQuantidade] = useState('')
   const [preco, setPreco] = useState('')
 
-  async function adicionarProduto() {
+  async function editarProduto() {
     try {
       const response = await fetch('http://127.0.0.1:5000/produto', {
         method: 'POST',
@@ -22,11 +23,8 @@ export default function Adicionar({ navigation }) {
         })
       })
 
-      if(response.status == 201) {
-        alert("Produto adicionado")
-        setNome("")
-        setPreco("")
-        setQuantidade("")
+      if (response.status == 201) {
+        alert("Produto editado")
       } else {
         throw "Valores inválidos"
       }
@@ -36,14 +34,37 @@ export default function Adicionar({ navigation }) {
     }
   }
 
+  async function removerProduto() {
+
+  }
+
+  // configura os valores a partir dos que foram passados
+  useEffect(() => {
+    const produto = route.params
+    if (produto) {
+      setPID(produto.p_id)
+      setNome(produto.nome)
+      setPreco(produto.preco)
+      setQuantidade(produto.quantidade)
+    }
+  }, [route.params])
+
   return (
     <>
       <Appbar>
         <Appbar.BackAction onPress={() => { navigation.goBack() }} />
-        <Appbar.Content title="Adicionar produto" />
+        <Appbar.Content title="Detalhes" />
       </Appbar>
 
       <SafeAreaView style={styles.container}>
+        <TextInput
+          style={styles.item}
+          label="ID"
+          value={PID}
+          editable={false}
+          onChangeText={setPID}
+        />
+
         <TextInput
           style={styles.item}
           label="Nome"
@@ -65,12 +86,21 @@ export default function Adicionar({ navigation }) {
           onChangeText={setPreco}
         />
 
-        <Button
-          mode="contained"
-          style={styles.botao}
-          icon="plus"
-          onPress={adicionarProduto}>Adicionar
-        </Button>
+        <View style={styles.barraBotao}>
+          <Button
+            mode="contained"
+            style={styles.botao}
+            icon="delete"
+            onPress={removerProduto}>Remover
+          </Button>
+
+          <Button
+            mode="contained"
+            style={styles.botao}
+            icon="file-edit"
+            onPress={editarProduto}>Editar
+          </Button>
+        </View>
 
       </SafeAreaView>
     </>
@@ -86,6 +116,12 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   botao: {
-    marginTop: 20
+    margin: 5,
+    marginTop: 20,
+    flexGrow: 1
+  },
+  barraBotao: {
+    width: '100%',
+    flexDirection: 'row'
   }
 })
