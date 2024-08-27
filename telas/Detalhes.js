@@ -1,63 +1,52 @@
 import { useEffect, useState } from 'react'
-import { SafeAreaView, StyleSheet, View } from 'react-native';
-import { Button, TextInput, Appbar } from 'react-native-paper';
+import { SafeAreaView, StyleSheet, View } from 'react-native'
+import { Button, TextInput, Appbar } from 'react-native-paper'
+
+import servidor from '../utils/servidor'
 
 export default function Adicionar({ route, navigation }) {
-  const [PID, setPID] = useState('')
+  const [id, setId] = useState('')
   const [nome, setNome] = useState('')
   const [quantidade, setQuantidade] = useState('')
   const [preco, setPreco] = useState('')
 
-  async function editarProduto() {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/produto/' + PID, {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nome: nome,
-          quantidade: quantidade,
-          preco: preco
-        })
-      })
-
-      if (response.status == 201) {
-        alert("Produto editado")
-        navigation.navigate('Principal')
-      } else {
-        throw "Valores inválidos"
-      }
-    } catch (error) {
-      console.log(error)
-      alert(error)
-    }
-  }
-
   async function removerProduto() {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/produto/' + PID, {
-        method: 'DELETE'
-      })
-
-      if (response.status == 204) {
-        alert("Produto removido")
-        navigation.navigate('Principal')
-      } else {
-        throw "Valores inválidos"
-      }
-    } catch (error) {
-      console.log(error)
-      alert(error)
+    let resp = await servidor.removerProduto({
+      id: id,
+      nome: nome,
+      quantidade: quantidade,
+      preco: preco
+    })
+    
+    if(resp) {
+      alert("Produto removido")
+      navigation.navigate("Principal")
+    } else {
+      alert("Erro ao remover produto")
     }
   }
 
-  // configura os valores a partir dos que foram passados
+  async function editarProduto() {
+    let resp = await servidor.editarProduto({
+      id: id,
+      nome: nome,
+      quantidade: quantidade,
+      preco: preco
+    })
+    
+    if(resp){
+      alert("Produto editado")
+      navigation.navigate("Principal")
+    } else {
+      alert("Erro ao editar produto")
+    }
+  }
+
+  // configura os valores a partir dos que foram passados na navegação
   useEffect(() => {
     const produto = route.params
     if (produto) {
-      setPID(produto.p_id)
+      setId(produto.id)
       setNome(produto.nome)
       setPreco(produto.preco)
       setQuantidade(produto.quantidade)
@@ -75,9 +64,9 @@ export default function Adicionar({ route, navigation }) {
         <TextInput
           style={styles.item}
           label="ID"
-          value={PID}
-          editable={false}
-          onChangeText={setPID}
+          value={id}
+          readOnly={true}
+          onChangeText={setId}
         />
 
         <TextInput

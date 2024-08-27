@@ -2,37 +2,26 @@ import { useState } from 'react'
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { Button, TextInput, Appbar } from 'react-native-paper';
 
+import servidor from '../utils/servidor'
+
 export default function Adicionar({ navigation }) {
   const [nome, setNome] = useState('')
   const [quantidade, setQuantidade] = useState('')
   const [preco, setPreco] = useState('')
 
   async function adicionarProduto() {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/produto', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nome: nome,
-          quantidade: quantidade,
-          preco: preco
-        })
-      })
-
-      if(response.status == 201) {
-        alert("Produto adicionado")
-        setNome("")
-        setPreco("")
-        setQuantidade("")
-      } else {
-        throw "Valores inválidos"
-      }
-    } catch (error) {
-      console.log(error)
-      alert(error)
+    let resp = await servidor.adicionarProduto({
+      nome: nome,
+      quantidade: quantidade,
+      preco: preco
+    })
+    if(resp) {
+      alert("Produto adicionado com sucesso")
+      setNome("")
+      setQuantidade("")
+      setPreco("")
+    } else {
+      alert("Erro ao tentar adicionar o produto")
     }
   }
 

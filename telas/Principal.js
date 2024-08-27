@@ -3,6 +3,8 @@ import { SafeAreaView, StyleSheet } from 'react-native'
 import { DataTable, FAB, Appbar } from 'react-native-paper'
 import { useState, useEffect } from 'react'
 
+import servidor from '../utils/servidor'
+
 export default function Principal({ navigation }) {
   const [produtos, setProdutos] = useState([])
 
@@ -10,19 +12,16 @@ export default function Principal({ navigation }) {
     navigation.navigate('Detalhes', produto)
   }
 
-  async function lerProdutos() {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/produto')
-      return await response.json()
-    } catch (error) {
-      console.log(error)
-      alert(error)
-    }
-  }
-
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      lerProdutos().then((resp) => setProdutos(resp))
+    const unsubscribe = navigation.addListener('focus', async () => {
+      let produtos = await servidor.lerProdutos()
+
+      if (produtos) {
+        setProdutos(produtos)
+      } else {
+        console.log(erro)
+        alert("Erro ao tentar ler os produtos")
+      }
     });
 
     return unsubscribe;
@@ -45,8 +44,8 @@ export default function Principal({ navigation }) {
 
         {produtos.map((produto) => (
           <DataTable.Row
-            key={produto.p_id}
-            onPress={() => verDetalhes(produto)}  
+            key={produto.id}
+            onPress={() => verDetalhes(produto)}
           >
             <DataTable.Cell>{produto.nome}</DataTable.Cell>
             <DataTable.Cell numeric>{produto.quantidade}</DataTable.Cell>
