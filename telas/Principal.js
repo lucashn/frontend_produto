@@ -40,18 +40,20 @@ export default function Principal({ navigation }) {
             <DataTable.Title numeric>Quantidade</DataTable.Title>
             <DataTable.Title numeric>Preço</DataTable.Title>
           </DataTable.Header>
+
+          {produtos.map((produto) => (
+            <DataTable.Row
+              key={produto.id}
+              onPress={() => verDetalhes(produto)}
+            >
+              <DataTable.Cell>{produto.nome}</DataTable.Cell>
+              <DataTable.Cell numeric>{produto.quantidade}</DataTable.Cell>
+              <DataTable.Cell numeric>{produto.preco}</DataTable.Cell>
+            </DataTable.Row>
+          ))}
+
         </DataTable>
 
-        {produtos.map((produto) => (
-          <DataTable.Row
-            key={produto.id}
-            onPress={() => verDetalhes(produto)}
-          >
-            <DataTable.Cell>{produto.nome}</DataTable.Cell>
-            <DataTable.Cell numeric>{produto.quantidade}</DataTable.Cell>
-            <DataTable.Cell numeric>{produto.preco}</DataTable.Cell>
-          </DataTable.Row>
-        ))}
         <StatusBar mode="auto" />
 
       </SafeAreaView>
